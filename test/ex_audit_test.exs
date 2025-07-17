@@ -261,7 +261,7 @@ defmodule ExAuditTest do
     end
 
     test "returns a queryable", %{user: user} do
-     assert user |> Repo.history_query() |> Repo.all() |> Enum.count() == 1
+      assert user |> Repo.history_query() |> Repo.all() |> Enum.count() == 1
     end
   end
 end

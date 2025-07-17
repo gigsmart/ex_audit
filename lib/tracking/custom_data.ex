@@ -22,7 +22,7 @@ defmodule ExAudit.CustomData do
   def handle_cast({:store, pid, data}, ets) do
     Process.monitor(pid)
 
-    unless Process.alive?(pid)do
+    unless Process.alive?(pid) do
       :ets.delete(ets, pid)
     end
 
