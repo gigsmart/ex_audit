@@ -10,22 +10,23 @@ defmodule ExAudit.CustomData do
   end
 
   def init(nil) do
-    ets = :ets.new(__MODULE__, [:protected, :named_table])
+    ets = :ets.new(__MODULE__, [:public, :named_table])
     {:ok, ets}
   end
 
   def track(pid, data) do
-    GenServer.call(__MODULE__, {:store, pid, data})
+    :ets.insert(__MODULE__, {pid, data})
+    GenServer.cast(__MODULE__, {:store, pid, data})
   end
 
-  def handle_call({:store, pid, data}, _, ets) do
-    :ets.insert(ets, {pid, data})
+  def handle_cast({:store, pid, data}, ets) do
     Process.monitor(pid)
-    {:reply, :ok, ets}
+    {:noreply, ets}
   end
 
   def get(pid \\ self()) do
-    :ets.lookup(__MODULE__, pid)
+    __MODULE__
+    |> :ets.lookup(pid)
     |> Enum.flat_map(&elem(&1, 1))
   end
 
